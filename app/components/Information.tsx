@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Information() {
   return (
-    <div className='flex justify-center items-center mt-30 gap-10'>
+    <div className='flex justify-center items-center mt-40 gap-10'>
         <div>
             <h1 className='text-6xl font-bold'>How it works?</h1>
         </div>

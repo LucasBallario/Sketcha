@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Carousel from './Carousel'
 import Information from './Information'
+import StyleSelector from './StyleSelector'
+import Footer from './Footer'
 
 export default function Banner() {
   return (
@@ -49,11 +51,17 @@ export default function Banner() {
             professional architectural rendering — perfect for presentations, investor 
             pitches, and design visualization, no 3D modeling skills required.
           </p>
+
+          <button className='py-4 px-8 mt-6 bg-black text-white font-bold border rounded-xl cursor-pointer hover:bg-white hover:text-black hover:border-2'>
+            Start Now
+            </button>
         </div>
 
       </div>
       <Carousel />
       <Information />
+      <StyleSelector />
+      <Footer />
     </div>
   )
 }

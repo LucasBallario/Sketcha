@@ -3,6 +3,7 @@ import Banner from "./components/Banner";
 
 export default function Home() {
   return (
-    <div><Banner/></div>
+    <div className="scroll-smooth
+"><Banner/></div>
   );
 }
