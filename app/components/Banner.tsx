@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import Carousel from './Carousel'
+import Information from './Information'
 
 export default function Banner() {
   return (
@@ -52,6 +53,7 @@ export default function Banner() {
 
       </div>
       <Carousel />
+      <Information />
     </div>
   )
 }

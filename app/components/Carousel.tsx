@@ -14,12 +14,12 @@ export default function Carousel() {
   const loopImages = [...images, ...images]
 
   return (
-    <div className="overflow-hidden w-full py-15">
+    <div className="overflow-hidden w-full mt-15">
       <div className="flex animate-scroll gap-6">
         {loopImages.map((src, index) => (
           <div
             key={index}
-            className="relative flex-shrink-0 w-[300px] h-[200px]"
+            className="relative flex-shrink-0 w-[200px] h-[100px]"
           >
             <Image
               src={src}
