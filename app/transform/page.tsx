@@ -8,6 +8,59 @@ export default function Page() {
   const [selectedImage, setSelectedImage] = useState(null)
   const [showStyles, setShowStyles] = useState(false)
   const [selectedStyles, setSelectedStyles] = useState(null)
+  const [selectedMaterials, setSelectedMaterials] = useState(null)
+  const [canGenerate,setCanGenerate] = useState(null)
+
+  const styles = [
+    "Modern",
+    "Minimalist",
+    "Scandinavian",
+    "Art Deco",
+    "Luxury",
+    "Industrial",
+    "Bohemian",
+    "Mid-Century Modern",
+    "Contemporary",
+    "Classic European",
+    "Japandi",
+    "Mediterranean",
+    "Rustic",
+    "Futuristic",
+    "Eclectic",
+    "Tropical",
+    "Vintage",
+    "Zen",
+    "Baroque",
+    "Cyberpunk"
+  ];
+
+  const materials = [
+    "Wood",
+    "Marble",
+    "Concrete",
+    "Glass",
+    "Steel",
+    "Brick",
+    "Stone",
+    "Bamboo",
+    "Leather",
+    "Velvet",
+    "Ceramic",
+    "Wicker",
+    "Granite",
+    "Terracotta",
+    "Linen",
+    "Copper",
+    "Gold",
+    "Plastic",
+    "Rattan",
+    "Fabric"
+  ];
+  
+
+  const handleChangeImage = () => {
+    setSelectedImage(null)
+  }
  
     return (
 <div>
@@ -70,7 +123,35 @@ export default function Page() {
       )}
     
     {selectedImage && (
-      <div className="flex justify-center items-center mt-10 ">
+      <div className="flex justify-center items-center mt-10 gap-6 ">
+
+    <div className="space-y-4">
+      <select 
+        onChange={(e) => setSelectedMaterials(e.target.value)}
+        className="w-full px-4 py-3 bg-zinc-600 text-white rounded-lg border border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer"
+      >
+        <option value="">Select main material</option>
+        {materials.map((material) => (
+          <option key={material} value={material}>
+            {material}
+          </option>
+        ))}
+      </select>
+
+      <select 
+        onChange={(e) => setSelectedStyles(e.target.value)}
+        className="w-full px-4 py-3 bg-zinc-600 text-white rounded-lg border border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer"
+      >
+         <option value="">Select prefered style</option>
+
+        {styles.map((style) => (
+          <option key={style} value={style}>
+            {style}
+          </option>
+        ))}
+      </select>
+    </div>
+
         <Image
         className="shadow-lg"
         src={selectedImage}
@@ -78,6 +159,11 @@ export default function Page() {
         height={500}
         width={500}
         />  
+       <button onClick={handleChangeImage}
+       className="px-8 py-4 bg-black/60 backdrop-blur-md border border-white/30 cursor-pointer
+        hover:bg-black/50 hover:border-white/50 font-semibold text-white rounded-full transition-all">
+         Change image
+      </button>
        </div>
     )}
 
