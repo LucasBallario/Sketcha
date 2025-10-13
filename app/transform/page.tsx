@@ -11,51 +11,72 @@ export default function Page() {
   const [selectedMaterials, setSelectedMaterials] = useState(null)
   const [canGenerate,setCanGenerate] = useState(null)
 
-  const styles = [
-    "Modern",
-    "Minimalist",
-    "Scandinavian",
-    "Art Deco",
-    "Luxury",
-    "Industrial",
-    "Bohemian",
-    "Mid-Century Modern",
-    "Contemporary",
-    "Classic European",
-    "Japandi",
-    "Mediterranean",
-    "Rustic",
-    "Futuristic",
-    "Eclectic",
-    "Tropical",
-    "Vintage",
-    "Zen",
-    "Baroque",
-    "Cyberpunk"
-  ];
+  const styles = { 
+    modern: "Modern minimalist Scandinavian",
+    industrial: "Industrial loft with urban edge",
+    luxury: "Upscale fine dining elegance",
+    rustic: "Rustic countryside farmhouse",
+    coastal: "Mediterranean coastal",
+    contemporary: "Sleek contemporary urban",
+    zen: "Minimalist Japanese Zen",
+    bohemian: "Bohemian eclectic artistic",
+    artdeco: "1920s Art Deco glamour",
+    tropical: "Tropical island paradise"
+  };
 
-  const materials = [
-    "Wood",
-    "Marble",
-    "Concrete",
-    "Glass",
-    "Steel",
-    "Brick",
-    "Stone",
-    "Bamboo",
-    "Leather",
-    "Velvet",
-    "Ceramic",
-    "Wicker",
-    "Granite",
-    "Terracotta",
-    "Linen",
-    "Copper",
-    "Gold",
-    "Plastic",
-    "Rattan",
-    "Fabric"
-  ];
+  const materials = { 
+  wood: "natural oak wood, wooden textures, timber finishes, wood grain details",
+  marble: "polished marble surfaces, marble countertops, luxurious stone finishes",
+  industrial: "exposed brick, concrete floors, raw steel beams, reclaimed wood, metal fixtures",
+  glass: "glass panels, transparent surfaces, mirrored accents, crystal elements",
+  leather: "premium leather upholstery, leather seating, tufted leather banquettes",
+  fabric: "soft fabric upholstery, linen textures, velvet seating, textile elements",
+  metal: "brushed metal fixtures, stainless steel accents, brass details, copper elements",
+  stone: "natural stone walls, stone flooring, rock textures, slate surfaces",
+  bamboo: "natural bamboo, sustainable materials, bamboo accents, eco-friendly finishes",
+  mixed: "eclectic mix of materials, varied textures, diverse finishes, complementary materials"
+  };
+
+  const generatePrompt = () => {
+    return `Professional architectural rendering of a restaurant interior based on the provided sketch.
+
+PRESERVE FROM SKETCH:
+- Exact spatial layout and floor plan
+- Furniture placement and arrangement
+- Architectural features (walls, windows, doors)
+- General proportions and perspective
+
+STYLE: ${styles[selectedStyles]} restaurant interior design
+
+PRIMARY MATERIALS: ${materials[selectedMaterials]}
+
+TECHNICAL SPECIFICATIONS:
+- Photorealistic, 8K quality render
+- Professional architectural lighting with warm ambient atmosphere
+- Physically accurate materials and textures
+- Realistic depth of field and subtle background blur
+- Natural shadows, reflections, and ambient occlusion
+- Magazine-quality architectural visualization
+
+LIGHTING:
+- Warm inviting ambiance (2700-3200K color temperature)
+- Combination of ambient, accent, and natural lighting
+- Soft realistic shadows
+
+DETAILS:
+- High-end restaurant interior aesthetic
+- Detailed material rendering with realistic textures
+- Professional color palette 
+- Inviting and sophisticated atmosphere
+- Clean, well-maintained appearance
+- Subtle decorative elements and finishing touches
+
+CAMERA: Eye-level perspective (1.6m height), professional architectural photography angle, balanced composition.
+
+Render as if photographed by a professional architectural photographer for a luxury design magazine.`;
+  }
+
+   
   
 
   const handleChangeImage = () => {
@@ -122,50 +143,70 @@ export default function Page() {
       </div>
       )}
     
+    
     {selectedImage && (
-      <div className="flex justify-center items-center mt-10 gap-6 ">
+  <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 py-16">
+    <div className="bg-card border border-border rounded-2xl shadow-2xl p-10 max-w-6xl w-full flex flex-col md:flex-row items-center gap-14">
+      
+      <div className="w-full md:w-1/2 flex flex-col gap-6">
+        <h2 className="text-3xl font-semibold text-foreground text-center md:text-left">
+          Customize your restaurant design
+        </h2>
 
-    <div className="space-y-4">
-      <select 
-        onChange={(e) => setSelectedMaterials(e.target.value)}
-        className="w-full px-4 py-3 bg-zinc-600 text-white rounded-lg border border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer"
-      >
-        <option value="">Select main material</option>
-        {materials.map((material) => (
-          <option key={material} value={material}>
-            {material}
-          </option>
-        ))}
-      </select>
+        <select 
+          onChange={(e) => setSelectedMaterials(e.target.value)}
+          className="w-full px-4 py-3 bg-zinc-800 text-white rounded-lg border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer text-lg"
+        >
+          <option value="">Select main material</option>
+          {Object.entries(materials).map(([key]) => (
+            <option key={key} value={key}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </option>
+          ))}
+        </select>
 
-      <select 
-        onChange={(e) => setSelectedStyles(e.target.value)}
-        className="w-full px-4 py-3 bg-zinc-600 text-white rounded-lg border border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer"
-      >
-         <option value="">Select prefered style</option>
+        <select 
+          onChange={(e) => setSelectedStyles(e.target.value)}
+          className="w-full px-4 py-3 bg-zinc-800 text-white rounded-lg border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors cursor-pointer text-lg"
+        >
+          <option value="">Select preferred style</option>
+          {Object.entries(styles).map(([key]) => (
+            <option key={key} value={key}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </option>
+          ))}
+        </select>
 
-        {styles.map((style) => (
-          <option key={style} value={style}>
-            {style}
-          </option>
-        ))}
-      </select>
-    </div>
+        <button
+          className="mt-4 px-8 py-4 bg-primary text-primary-foreground font-semibold text-lg rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:scale-105 active:scale-95"
+        >
+          Generate Render
+        </button>
+      </div>
+
+      <div className="w-full md:w-1/2 relative flex justify-center">
+        <button
+          onClick={handleChangeImage}
+          className="absolute top-4 right-4 px-3 py-2 bg-black/50 text-white text-sm rounded-md border border-white/20 backdrop-blur-sm hover:bg-black/40 hover:border-white/40 transition-all duration-200"
+        >
+          Change Image
+        </button>
 
         <Image
-        className="shadow-lg"
-        src={selectedImage}
-        alt="Preview"
-        height={500}
-        width={500}
-        />  
-       <button onClick={handleChangeImage}
-       className="px-8 py-4 bg-black/60 backdrop-blur-md border border-white/30 cursor-pointer
-        hover:bg-black/50 hover:border-white/50 font-semibold text-white rounded-full transition-all">
-         Change image
-      </button>
-       </div>
-    )}
+          className="rounded-xl shadow-xl border border-border"
+          src={selectedImage}
+          alt="Preview"
+          height={650}
+          width={650}
+        />
+      </div>
+    </div>
+  </div>
+)}
 
+
+
+   
 </div>
+
     )}
