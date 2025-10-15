@@ -92,6 +92,10 @@ Render as if photographed by a professional architectural photographer for a lux
       setIsLoading(false)
     },1500)
   },[])
+
+  if (isLoading) {
+    return <LoadingPage />
+  }
  
     return (
 <div>
