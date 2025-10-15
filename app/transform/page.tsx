@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
+import LoadingPage from "./components/LoadingPage"
 
 export default function Page() {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -10,6 +11,8 @@ export default function Page() {
   const [selectedStyles, setSelectedStyles] = useState(null)
   const [selectedMaterials, setSelectedMaterials] = useState(null)
   const [canGenerate,setCanGenerate] = useState(null)
+  const [isLoading,setIsLoading] = useState(true)
+  const [data,SetData] = useState(false)
 
   const styles = { 
     modern: "Modern minimalist Scandinavian",
@@ -82,6 +85,13 @@ Render as if photographed by a professional architectural photographer for a lux
   const handleChangeImage = () => {
     setSelectedImage(null)
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      SetData("Aca va el fetch del modelo")
+      setIsLoading(false)
+    },1500)
+  },[])
  
     return (
 <div>
@@ -204,7 +214,9 @@ Render as if photographed by a professional architectural photographer for a lux
   </div>
 )}
 
-
+{isLoading && (
+  <LoadingPage />
+)}
 
    
 </div>
