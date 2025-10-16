@@ -13,6 +13,8 @@ export default function Page() {
   const [canGenerate,setCanGenerate] = useState(null)
   const [isLoading,setIsLoading] = useState(true)
   const [data,SetData] = useState(false)
+  const [renderedImage, setRenderedImage] = useState(null)
+
 
   const styles = { 
     modern: "Modern minimalist Scandinavian",
@@ -92,6 +94,46 @@ Render as if photographed by a professional architectural photographer for a lux
       setIsLoading(false)
     },1500)
   },[])
+
+  const handleGenerateRender = async () => {
+      if (!selectedImage || !selectedStyles || !selectedMaterials) {
+      alert("Please upload an image and select style + material before generating.")
+      return
+      }
+      try{
+        setIsLoading(true)
+
+        const formData = new FormData()
+        formData.append("prompt", generatePrompt())
+
+        // Convierte imagen a file para enviar correctamente
+        const response = await fetch(selectedImage)
+        const blob = await response.blob()
+        formData.append("image", blob, "sketch.png")
+
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          body: formData,
+        })
+
+        const data = await res.json()
+
+      if (data.error) {
+        console.error("Replicate error:", data.error)
+        alert("Something went wrong while generating the render.")
+      } else {
+        setRenderedImage(data.image)
+      }
+
+
+
+      } catch(error) {
+      console.error("Error generating render:", error)
+      alert("An unexpected error occurred.")
+      } finally {
+        setIsLoading(false)
+      }
+  }
 
   if (isLoading) {
     return <LoadingPage />
@@ -191,7 +233,7 @@ Render as if photographed by a professional architectural photographer for a lux
           ))}
         </select>
 
-        <button
+        <button onClick={handleGenerateRender}
           className="mt-4 px-8 py-4 bg-primary text-primary-foreground font-semibold text-lg rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:scale-105 active:scale-95"
         >
           Generate Render
@@ -218,9 +260,7 @@ Render as if photographed by a professional architectural photographer for a lux
   </div>
 )}
 
-{isLoading && (
-  <LoadingPage />
-)}
+
 
    
 </div>
