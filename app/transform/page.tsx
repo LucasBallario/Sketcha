@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import LoadingPage from "./components/LoadingPage"
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -11,6 +12,8 @@ export default function Page() {
   const [selectedMaterials, setSelectedMaterials] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [renderedImage, setRenderedImage] = useState(null)
+  const router = useRouter();
+
 
   const styles = {
     modern: "Modern minimalist Scandinavian",
@@ -81,7 +84,7 @@ Render as if photographed by a professional architectural photographer.`
         console.error("Replicate error:", data.error)
         alert("Something went wrong while generating the render.")
       } else {
-        setRenderedImage(data.image)
+        router.push(`/result?image=${encodeURIComponent(String(data.image))}`);
       }
     } catch (error) {
       console.error("Error generating render:", error)
@@ -190,7 +193,6 @@ Render as if photographed by a professional architectural photographer.`
                 width={500}
               />
 
-              {/* 🔥 Nueva parte: mostrar render */}
               {renderedImage && (
                 <div className="mt-8 w-full flex flex-col items-center">
                   <h3 className="text-xl font-semibold mb-4 text-foreground">
