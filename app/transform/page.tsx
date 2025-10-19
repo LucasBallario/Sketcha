@@ -44,9 +44,41 @@ export default function Page() {
   const generatePrompt = () => {
     return `Professional architectural rendering of a restaurant interior based on the provided sketch.
 
-STYLE: ${styles[selectedStyles]}
-PRIMARY MATERIALS: ${materials[selectedMaterials]}
-Render as if photographed by a professional architectural photographer.`
+    PRESERVE FROM SKETCH:
+    - Exact spatial layout and floor plan
+    - Furniture placement and arrangement
+    - Architectural features (walls, windows, doors)
+    - General proportions and perspective
+    
+    STYLE: ${selectedStyles} restaurant interior design
+    
+    PRIMARY MATERIALS: ${selectedMaterials}
+    
+    TECHNICAL SPECIFICATIONS:
+    - Photorealistic, 8K quality render
+    - Professional architectural lighting with warm ambient atmosphere
+    - Physically accurate materials and textures
+    - Realistic depth of field and subtle background blur
+    - Natural shadows, reflections, and ambient occlusion
+    - Magazine-quality architectural visualization
+    
+    LIGHTING:
+    - Appropriate atmospheric lighting for ${selectedStyles} style
+    - Warm inviting ambiance (2700-3200K color temperature)
+    - Combination of ambient, accent, and natural lighting
+    - Soft realistic shadows
+    
+    DETAILS:
+    - High-end restaurant interior aesthetic
+    - Detailed material rendering with realistic textures
+    - Professional color palette appropriate for ${selectedStyles} dining establishment
+    - Inviting and sophisticated atmosphere
+    - Clean, well-maintained appearance
+    - Subtle decorative elements and finishing touches
+    
+    CAMERA: Eye-level perspective (1.6m height), professional architectural photography angle, balanced composition.
+    
+    Render as if photographed by a professional architectural photographer for a luxury design magazine.`
   }
 
   const handleChangeImage = () => {

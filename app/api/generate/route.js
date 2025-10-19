@@ -31,10 +31,10 @@ export async function POST(request) {
     // Crear la predicción
     let prediction = await replicate.predictions.create({
       model:
-        "bytedance/seedream-4:e6cff243d7a5e551e1ca2b4bf291413d649c9f1417f9a52c1c0a4fbc36027b83",
+        "bytedance/seedream-4",
       input: {
-        prompt: prompt,
-        input_image: "data:image/png;base64," + base64Image,
+        prompt: `${prompt}. Keep the structure and layout identical to the provided sketch.`,
+        input_image: ["data:image/png;base64," + base64Image],
         output_quality: "high",
       },
     });
