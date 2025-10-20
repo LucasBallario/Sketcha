@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const prompt = formData.get("prompt");
-    const image = formData.get("image");
+    const image = formData.get("image"); // Blob del <input type="file">
 
     if (!prompt || !image) {
       return NextResponse.json(
@@ -20,26 +20,40 @@ export async function POST(request) {
       );
     }
 
-    // Convertir imagen a base64
+    // Leer el blob y generar un data URI (válido como "uri" según el Schema)
     const bytes = await image.arrayBuffer();
-    const base64Image = Buffer.from(bytes).toString("base64");
+    const base64 = Buffer.from(bytes).toString("base64");
+    const mime = image.type || "image/png"; // por las dudas
+    const dataUri = `data:${mime};base64,${base64}`;
 
-    console.log("🟡 Prompt:", prompt);
-    console.log("🟡 Image size:", bytes.byteLength);
-    console.log("🟡 Sending request to Replicate...");
+    console.log("🟡 Prompt (first 180):", String(prompt).slice(0, 180) + "…");
+    console.log("🟡 Image type/size:", mime, image.size);
+    console.log("🧩 dataUri prefix ok:", dataUri.startsWith("data:image"));
 
-    // Crear la predicción
-    let prediction = await replicate.predictions.create({
-      model:
-        "bytedance/seedream-4",
-      input: {
-        prompt: `${prompt}. Keep the structure and layout identical to the provided sketch.`,
-        input_image: ["data:image/png;base64," + base64Image],
-        output_quality: "high",
-      },
+    const input = {
+      prompt:
+        String(prompt) +
+        "\n\nStrictly preserve the original geometry, perspective, furniture placement and camera. Do not change the layout.",
+      image_input: [dataUri],                 
+      aspect_ratio: "match_input_image",
+      size: "2K",                             
+      max_images: 1,
+      sequential_image_generation: "disabled",
+    };
+
+    console.log("🧠 Payload check:", {
+      image_input_len: input.image_input.length,
+      aspect_ratio: input.aspect_ratio,
+      size: input.size,
+      seq: input.sequential_image_generation,
     });
 
-    // Esperar hasta que la predicción termine
+    // Crear predicción y hacer polling hasta terminar
+    let prediction = await replicate.predictions.create({
+      model: "bytedance/seedream-4", // usa la versión por defecto actual
+      input,
+    });
+
     while (prediction.status !== "succeeded" && prediction.status !== "failed") {
       console.log("⏳ Render status:", prediction.status);
       await new Promise((r) => setTimeout(r, 2000));
@@ -47,27 +61,23 @@ export async function POST(request) {
     }
 
     if (prediction.status === "failed") {
-      throw new Error("The render failed on Replicate side.");
+      console.error("❌ Prediction failed:", prediction?.error || "(no error payload)");
+      return NextResponse.json(
+        { error: "Render generation failed on model side" },
+        { status: 500 }
+      );
     }
 
-    // Obtener la URL final del render
     const output = prediction.output;
-    const imageUrl = Array.isArray(output) ? output[0] : output;
+    const finalImage = Array.isArray(output) ? output[0] : output;
+    console.log("✅ Rendered image URL:", finalImage);
 
-    console.log("✅ Rendered image URL:", imageUrl);
-
-    return NextResponse.json({ image: imageUrl });
+    return NextResponse.json({ image: finalImage });
   } catch (error) {
     console.error("❌ Error generating render:");
     console.error("Message:", error.message);
-    console.error("Stack:", error.stack);
-    console.error("Full error object:", error);
-
     return NextResponse.json(
-      {
-        error: "Render generation failed",
-        details: error.message || JSON.stringify(error),
-      },
+      { error: "Render generation failed", details: error.message },
       { status: 500 }
     );
   }
