@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
     getSession();
 
-    //  cambios en la sesión
+    //  Escuchar cambios en la sesión
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -32,16 +32,27 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  // Registro
-  const signUp = async (email, password) => {
+  //  Registro con inserción en "profiles"
+  const signUp = async (email, password, fullName) => {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({ email, password });
     setLoading(false);
+
     if (error) throw error;
+
+    // Si el usuario se creó correctamente, guardar su perfil
+    if (data.user) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ id: data.user.id, full_name: fullName }]);
+
+      if (profileError) throw profileError;
+    }
+
     return data;
   };
 
-  // Inicio de sesión
+  //  Inicio de sesión
   const signIn = async (email, password) => {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({

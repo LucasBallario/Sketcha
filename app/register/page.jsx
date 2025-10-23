@@ -56,7 +56,7 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, name);
 
       if (error) {
         setError(error.message);
