@@ -29,7 +29,7 @@ export function RegisterForm() {
   const { signUp } = useAuth();
   const router = useRouter();
 
-  // validar las contraseñas en tiempo real
+  //  validación en tiempo real de contraseñas
   useEffect(() => {
     if (password && confirmPassword && password !== confirmPassword) {
       setError("Passwords do not match");
@@ -42,7 +42,7 @@ export function RegisterForm() {
     e.preventDefault();
     setError("");
 
-    // Validar contraseñas antes del registro
+    //  Validaciones antes del registro
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -61,11 +61,10 @@ export function RegisterForm() {
       if (error) {
         setError(error.message);
       } else {
-        setError("✅ Check your inbox to confirm your email before logging in.");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        setName("");
+        setError(" Account created successfully! Redirecting...");
+        setTimeout(() => {
+          router.push("/"); // Redirige al login
+        }, 2000);
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -87,7 +86,6 @@ export function RegisterForm() {
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-         
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
             <div className="relative">
@@ -104,7 +102,6 @@ export function RegisterForm() {
             </div>
           </div>
 
-          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">
@@ -116,16 +113,13 @@ export function RegisterForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`pl-10 ${
-                  error.toLowerCase().includes("email")
-                    ? "border-red-500"
-                    : ""
+                  error.toLowerCase().includes("email") ? "border-red-500" : ""
                 }`}
                 required
               />
             </div>
           </div>
 
-         
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
@@ -157,7 +151,6 @@ export function RegisterForm() {
             </div>
           </div>
 
-          
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <div className="relative">
@@ -191,7 +184,7 @@ export function RegisterForm() {
             </div>
           </div>
 
-          
+          {/* Error / Success Message */}
           <div className="min-h-[20px] text-center">
             {error && (
               <p
@@ -206,6 +199,7 @@ export function RegisterForm() {
             )}
           </div>
 
+         
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Create account"}
           </Button>
