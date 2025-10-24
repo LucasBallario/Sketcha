@@ -35,7 +35,13 @@ export const AuthProvider = ({ children }) => {
   //  Registro con inserción en "profiles"
   const signUp = async (email, password, fullName) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+       email,
+       password,
+       options: {
+        data: { full_name: fullName }, 
+      },
+      });
     setLoading(false);
 
     if (error) throw error;

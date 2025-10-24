@@ -16,7 +16,7 @@ import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-export function RegisterForm() {
+export default function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,36 +42,45 @@ export function RegisterForm() {
     e.preventDefault();
     setError("");
 
-    //  Validaciones antes del registro
+  console.log("📩 Email:", email);
+  console.log("🔑 Password:", password);
+  console.log("👤 Name:", name);
+  
+    // Validaciones
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     try {
-      const { error } = await signUp(email, password, name);
+        console.log("🚀 Calling signUp...");
+      const { data, error } = await signUp(email, password, name);
+      console.log("🧠 signUp response:", response);
 
+  
       if (error) {
         setError(error.message);
+        console.error("Supabase error:", error);
       } else {
-        setError(" Account created successfully! Redirecting...");
-        setTimeout(() => {
-          router.push("/"); // Redirige al login
-        }, 2000);
+        console.log(" Signup successful:", data);
+        // Esperar un poco para que onAuthStateChange actualice
+        setTimeout(() => router.push("/transform"), 500);
       }
     } catch (err) {
+      console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
 
   return (
     <Card className="w-full max-w-md">
