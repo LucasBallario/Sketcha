@@ -41,12 +41,12 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-  console.log("📩 Email:", email);
-  console.log("🔑 Password:", password);
-  console.log("👤 Name:", name);
   
-    // Validaciones
+    console.log("📩 Email:", email);
+    console.log("🔑 Password length:", password.length);
+    console.log("👤 Name:", name);
+  
+    // Validaciones previas
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -57,24 +57,34 @@ export default function RegisterForm() {
     }
   
     setIsLoading(true);
-  
     try {
-        console.log("🚀 Calling signUp...");
+      console.log("🚀 Calling signUp(email, password, name)...");
       const { data, error } = await signUp(email, password, name);
-      console.log("🧠 signUp response:", response);
-
+  
+      console.log("🧠 signUp data:", data);
+      console.log("🧠 signUp error:", error);
   
       if (error) {
-        setError(error.message);
-        console.error("Supabase error:", error);
-      } else {
-        console.log(" Signup successful:", data);
-        // Esperar un poco para que onAuthStateChange actualice
-        setTimeout(() => router.push("/transform"), 500);
+        // Errores típicos: email ya usado, formato inválido, etc.
+        setError(error.message || "Signup failed");
+        return;
       }
+  
+      // Supabase puede requerir verificación por email:
+      // - Si email confirmation está ON: user existe pero NO hay session.
+      // - Si está OFF: tenés session directa.
+      if (data?.user && !data?.session) {
+        setError("✅ We sent you a confirmation email. Please verify to continue.");
+        return;
+      }
+  
+      // Login directo (sin confirmación de email)
+      console.log("✅ Signup successful. Redirecting...");
+      setTimeout(() => router.push("/transform"), 300);
     } catch (err) {
+      // Algunos errores de supabase vienen como objetos sin message
       console.error("Unexpected error:", err);
-      setError("An unexpected error occurred. Please try again.");
+      setError(err?.message || JSON.stringify(err) || "Unexpected error");
     } finally {
       setIsLoading(false);
     }

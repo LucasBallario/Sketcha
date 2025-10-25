@@ -3,88 +3,56 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  //  Chequear sesión al cargar
+  // Cargar sesión inicial
   useEffect(() => {
-    const getSession = async () => {
+    const init = async () => {
       const { data, error } = await supabase.auth.getSession();
-      if (error) console.error("Error getting session:", error);
+      if (error) console.error("getSession error:", error);
       setUser(data?.session?.user ?? null);
       setLoading(false);
     };
+    init();
 
-    getSession();
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
-    //  Escuchar cambios en la sesión
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => sub.subscription.unsubscribe();
   }, []);
 
-  //  Registro con inserción en "profiles"
+  // ⬅️ MUY IMPORTANTE: firma con parámetros separados
   const signUp = async (email, password, fullName) => {
-    setLoading(true);
+    // devolvemos SIEMPRE { data, error } para que el caller tenga visibilidad
     const { data, error } = await supabase.auth.signUp({
-       email,
-       password,
-       options: {
-        data: { full_name: fullName }, 
+      email,
+      password,
+      options: {
+        data: { full_name: fullName ?? "" }, // va a public.profiles vía trigger
       },
-      });
-    setLoading(false);
-
-    if (error) throw error;
-
-    // Si el usuario se creó correctamente, guardar su perfil
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([{ id: data.user.id, full_name: fullName }]);
-
-      if (profileError) throw profileError;
-    }
-
-    return data;
+    });
+    return { data, error };
   };
 
-  //  Inicio de sesión
   const signIn = async (email, password) => {
-    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    setLoading(false);
-    if (error) throw error;
-    return data;
+    return { data, error };
   };
 
-  //  Cerrar sesión
   const signOut = async () => {
-    setLoading(true);
     const { error } = await supabase.auth.signOut();
-    setLoading(false);
-    if (error) throw error;
+    return { error };
   };
 
-  const value = {
-    user,
-    loading,
-    signUp,
-    signIn,
-    signOut,
-  };
+  const value = { user, loading, signUp, signIn, signOut };
 
   return (
     <AuthContext.Provider value={value}>
@@ -93,11 +61,8 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook para usar el contexto en cualquier parte de la app
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used inside an AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
 };
