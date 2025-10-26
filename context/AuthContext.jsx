@@ -26,17 +26,18 @@ export const AuthProvider = ({ children }) => {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // ⬅️ MUY IMPORTANTE: firma con parámetros separados
   const signUp = async (email, password, fullName) => {
-    // devolvemos SIEMPRE { data, error } para que el caller tenga visibilidad
+    setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName ?? "" }, // va a public.profiles vía trigger
+        data: { full_name: fullName }, 
       },
     });
-    return { data, error };
+    setLoading(false);
+    if (error) throw error;
+    return data;
   };
 
   const signIn = async (email, password) => {
