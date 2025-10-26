@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import LoadingPage from "./components/LoadingPage"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
+import { useCredits } from "@/hooks/useCredits"
 
 export default function Page() {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -12,8 +14,10 @@ export default function Page() {
   const [selectedMaterials, setSelectedMaterials] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [renderedImage, setRenderedImage] = useState(null)
-  const router = useRouter();
+  const router = useRouter()
 
+  const { user } = useAuth()
+  const { credits, loading: creditsLoading, decrementCredits } = useCredits(user?.id)
 
   const styles = {
     modern: "Modern minimalist Scandinavian",
@@ -96,6 +100,21 @@ export default function Page() {
       return
     }
 
+    if (!user) {
+      alert("Please log in first.")
+      return
+    }
+
+    if (creditsLoading) {
+      alert("Checking your credits...")
+      return
+    }
+
+    if (credits <= 0) {
+      alert("You’ve run out of credits!")
+      return
+    }
+
     try {
       setIsLoading(true)
       const formData = new FormData()
@@ -116,7 +135,9 @@ export default function Page() {
         console.error("Replicate error:", data.error)
         alert("Something went wrong while generating the render.")
       } else {
-        router.push(`/result?image=${encodeURIComponent(String(data.image))}`);
+        // descontar crédito antes de redirigir
+        await decrementCredits()
+        router.push(`/result?image=${encodeURIComponent(String(data.image))}`)
       }
     } catch (error) {
       console.error("Error generating render:", error)
@@ -177,6 +198,14 @@ export default function Page() {
                 Customize your restaurant design
               </h2>
 
+              {/* 👇 Créditos del usuario */}
+              <p className="text-gray-700 mb-2">
+                Credits left:{" "}
+                <span className="font-semibold">
+                  {creditsLoading ? "..." : credits ?? 0}
+                </span>
+              </p>
+
               <select
                 onChange={(e) => setSelectedMaterials(e.target.value)}
                 className="w-full px-4 py-3 bg-zinc-800 text-white rounded-lg border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors text-lg"
@@ -203,7 +232,12 @@ export default function Page() {
 
               <button
                 onClick={handleGenerateRender}
-                className="mt-4 px-8 py-4 bg-primary text-primary-foreground font-semibold text-lg rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:scale-105 active:scale-95"
+                disabled={!selectedImage || !selectedStyles || !selectedMaterials || credits <= 0}
+                className={`mt-4 px-8 py-4 font-semibold text-lg rounded-xl transition-all duration-200 shadow-md hover:scale-105 active:scale-95 ${
+                  credits <= 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
               >
                 Generate Render
               </button>
