@@ -232,12 +232,20 @@ export default function Page() {
 
               <button
                 onClick={handleGenerateRender}
-                disabled={!selectedImage || !selectedStyles || !selectedMaterials || credits <= 0}
-                className={`mt-4 px-8 py-4 font-semibold text-lg rounded-xl transition-all duration-200 shadow-md hover:scale-105 active:scale-95 ${
+                disabled={
+                  !selectedImage ||
+                  !selectedStyles ||
+                  !selectedMaterials ||
+                  creditsLoading ||
+                  credits === undefined ||
                   credits <= 0
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90"
-                }`}
+                }
+                
+                  className={`mt-4 px-8 py-4 font-semibold text-lg rounded-xl transition-all duration-200 shadow-md hover:scale-105 active:scale-95 ${
+                    credits <= 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  }`}
               >
                 Generate Render
               </button>
