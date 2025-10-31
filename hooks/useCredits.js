@@ -38,6 +38,7 @@ export function useCredits(userId) {
   };
 
   useEffect(() => {
+    if (!userId) return;
     fetchCredits();
   }, [userId]);
 
