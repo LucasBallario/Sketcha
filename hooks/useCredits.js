@@ -39,6 +39,7 @@ export function useCredits(userId) {
 
   useEffect(() => {
     if (!userId) return;
+    console.log("🧩 useCredits → userId recibido:", userId);
     fetchCredits();
   }, [userId]);
 

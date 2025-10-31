@@ -19,6 +19,12 @@ export default function Page() {
   const { user } = useAuth()
   const { credits, loading: creditsLoading, decrementCredits } = useCredits(user?.id)
 
+  useEffect(() => {
+    if (!user && !isLoading) {
+      router.push("/login")
+    }
+  }, [user, isLoading, router])
+
   const styles = {
     modern: "Modern minimalist Scandinavian",
     industrial: "Industrial loft with urban edge",
