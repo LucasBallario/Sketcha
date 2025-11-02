@@ -1,5 +1,6 @@
 "use client"
 
+import ProtectedRoute from '../components/ProtectedRoute'
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import LoadingPage from "./components/LoadingPage"
@@ -8,6 +9,14 @@ import { useAuth } from "@/context/AuthContext"
 import { useCredits } from "@/hooks/useCredits"
 
 export default function Page() {
+  return (
+    <ProtectedRoute>
+      <TransformPageContent />
+    </ProtectedRoute>
+  )
+}
+
+function TransformPageContent() {
   const [selectedImage, setSelectedImage] = useState(null)
   const [showStyles, setShowStyles] = useState(false)
   const [selectedStyles, setSelectedStyles] = useState(null)
@@ -18,12 +27,6 @@ export default function Page() {
 
   const { user } = useAuth()
   const { credits, loading: creditsLoading, decrementCredits } = useCredits(user?.id)
-
-  useEffect(() => {
-    if (!user && !isLoading) {
-      router.push("/login")
-    }
-  }, [user, isLoading, router])
 
   const styles = {
     modern: "Modern minimalist Scandinavian",
@@ -141,7 +144,6 @@ export default function Page() {
         console.error("Replicate error:", data.error)
         alert("Something went wrong while generating the render.")
       } else {
-        // descontar crédito antes de redirigir
         await decrementCredits()
         router.push(`/result?image=${encodeURIComponent(String(data.image))}`)
       }
@@ -204,7 +206,6 @@ export default function Page() {
                 Customize your restaurant design
               </h2>
 
-              {/* 👇 Créditos del usuario */}
               <p className="text-gray-700 mb-2">
                 Credits left:{" "}
                 <span className="font-semibold">
@@ -246,12 +247,11 @@ export default function Page() {
                   credits === undefined ||
                   credits <= 0
                 }
-                
-                  className={`mt-4 px-8 py-4 font-semibold text-lg rounded-xl transition-all duration-200 shadow-md hover:scale-105 active:scale-95 ${
-                    credits <= 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-primary text-primary-foreground hover:bg-primary/90"
-                  }`}
+                className={`mt-4 px-8 py-4 font-semibold text-lg rounded-xl transition-all duration-200 shadow-md hover:scale-105 active:scale-95 ${
+                  credits <= 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
               >
                 Generate Render
               </button>

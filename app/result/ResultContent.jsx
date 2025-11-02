@@ -1,34 +1,33 @@
-'use client'
+"use client"
 
+import ProtectedRoute from "@/components/ProtectedRoute"
 import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 
-export default function ResultContent() {
+function ResultContentInner() {
   const searchParams = useSearchParams()
   const rawImage = searchParams.get("image")
   const image = rawImage ? decodeURIComponent(rawImage) : null
 
   const handleDownload = async () => {
-    if (!image) return;
-
+    if (!image) return
     try {
-      const response = await fetch(image);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "rendered_design.jpg";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const response = await fetch(image)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = "rendered_design.jpg"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
     } catch (error) {
-      console.error("❌ Error downloading image:", error);
-      alert("Failed to download the image. Please try again.");
+      console.error("❌ Error downloading image:", error)
+      alert("Failed to download the image. Please try again.")
     }
-  };
+  }
 
   if (!image || !image.startsWith("http")) {
     return (
@@ -69,5 +68,13 @@ export default function ResultContent() {
         </Link>
       </div>
     </div>
+  )
+}
+
+export default function ResultContent() {
+  return (
+    <ProtectedRoute>
+      <ResultContentInner />
+    </ProtectedRoute>
   )
 }
