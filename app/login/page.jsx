@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react"
 import { useRouter } from "next/navigation"
-const [error, setError] = useState("");
+
 
 
 export default function LoginForm() {
+  const [error, setError] = useState("");
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
