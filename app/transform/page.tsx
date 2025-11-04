@@ -213,6 +213,14 @@ function TransformPageContent() {
                 </span>
               </p>
 
+              <button
+                onClick={() => router.push("/buy-credits")}
+                className="mt-2 w-fit bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-zinc-700 transition"
+              >
+                Buy Credits
+              </button>
+
+
               <select
                 onChange={(e) => setSelectedMaterials(e.target.value)}
                 className="w-full px-4 py-3 bg-zinc-800 text-white rounded-lg border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400 hover:bg-zinc-700 transition-colors text-lg"
