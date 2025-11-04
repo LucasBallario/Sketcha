@@ -9,7 +9,6 @@ export async function POST(req) {
   const sig = req.headers.get("stripe-signature");
 
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(
       body,
@@ -23,12 +22,19 @@ export async function POST(req) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const userId = session.metadata.user_id;
-    const credits = parseInt(session.metadata.credits);
+    const plan = session.metadata.plan;
 
-    await supabase.rpc("increment_credits", {
-      user_id: userId,
-      amount: credits,
-    });
+    if (plan === "payg") {
+      await supabase.rpc("increment_credits", { user_id: userId, amount: 5 });
+    } else if (plan === "standard") {
+      await supabase.rpc("increment_credits", { user_id: userId, amount: 15 });
+    } else if (plan === "unlimited") {
+      // En una tabla "subscriptions" podés guardar el estado del plan activo
+      await supabase
+        .from("profiles")
+        .update({ unlimited: true })
+        .eq("id", userId);
+    }
   }
 
   return NextResponse.json({ received: true });
