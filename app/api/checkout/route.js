@@ -18,8 +18,9 @@ export async function POST(req) {
   };
 
   const priceId = planMap[planType];
-  if (!priceId)
+  if (!priceId) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -27,7 +28,7 @@ export async function POST(req) {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: planType === "unlimited" ? "subscription" : "payment",
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/cancel`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/buy-credits`, // 🔥 redirige directo al pricing
       metadata: {
         user_id: userId,
         plan: planType,
@@ -37,6 +38,9 @@ export async function POST(req) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error("Stripe error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Error creating checkout session" },
+      { status: 500 }
+    );
   }
 }
