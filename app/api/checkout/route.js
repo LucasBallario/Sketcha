@@ -28,7 +28,7 @@ export async function POST(req) {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: planType === "unlimited" ? "subscription" : "payment",
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/buy-credits`, // 🔥 redirige directo al pricing
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/buy-credits`, 
       metadata: {
         user_id: userId,
         plan: planType,
