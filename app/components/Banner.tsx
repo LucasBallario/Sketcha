@@ -12,7 +12,10 @@ import { useUserProfile } from "@/lib/useUserProfile";
 
 export default function Banner() {
   const { user, signOut } = useAuth();
-  const { profile, loading } = useUserProfile(user?.id);
+
+  const userId = (user as { id?: string })?.id;
+
+  const { profile, loading } = useUserProfile(userId);
 
   const displayName = profile?.full_name
   ? profile.full_name.split(" ")[0]
@@ -21,13 +24,11 @@ export default function Banner() {
 
   return (
     <div className="flex flex-col min-h-screen px-8">
-      {/* Header */}
       <div className="flex justify-between items-center py-6">
         <Image src="/logo.png" width={100} height={100} alt="logo" />
 
         <p className="cursor-pointer text-slate-700 hover:text-black">How it works</p>
 
-        {/* 🔐 No sesión */}
         {!user && (
           <Link href="/login">
             <button className="border-2 border-black bg-white text-black rounded-xl px-4 py-2 cursor-pointer hover:bg-black hover:text-white transition">
@@ -36,7 +37,6 @@ export default function Banner() {
           </Link>
         )}
 
-        {/* 👋 Con sesión */}
         {user && !loading && (
           <div className="flex items-center gap-4">
             <p className="text-gray-700 font-medium">
