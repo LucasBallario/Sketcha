@@ -14,19 +14,19 @@ export default function Banner() {
   const { user, signOut } = useAuth();
 
   const userId = (user as { id?: string })?.id;
+  const { profile, loading } = useUserProfile(userId) as {
+    profile: { full_name?: string } | null;
+    loading: boolean;
+  };
 
-  const { profile, loading } = useUserProfile(userId);
-
-  const displayName = profile?.full_name
-  ? profile.full_name.split(" ")[0]
-  : "User";
-
+  const displayName =
+    profile?.full_name?.split(" ")[0] || "User";
 
   return (
     <div className="flex flex-col min-h-screen px-8">
+      {/* Header */}
       <div className="flex justify-between items-center py-6">
         <Image src="/logo.png" width={100} height={100} alt="logo" />
-
         <p className="cursor-pointer text-slate-700 hover:text-black">How it works</p>
 
         {!user && (
@@ -40,7 +40,7 @@ export default function Banner() {
         {user && !loading && (
           <div className="flex items-center gap-4">
             <p className="text-gray-700 font-medium">
-            Hi, {displayName}
+              Hi, {displayName}
             </p>
             <button
               onClick={signOut}
@@ -75,9 +75,9 @@ export default function Banner() {
             From Sketch to Reality
           </h1>
           <p className="text-gray-700 text-lg">
-            Bring your restaurant vision to life with AI-powered professional renders. 
-            Upload your restaurant sketch and watch as our AI transforms it into a 
-            professional architectural rendering — perfect for presentations, investor 
+            Bring your restaurant vision to life with AI-powered professional renders.
+            Upload your restaurant sketch and watch as our AI transforms it into a
+            professional architectural rendering — perfect for presentations, investor
             pitches, and design visualization, no 3D modeling skills required.
           </p>
 
