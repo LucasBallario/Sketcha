@@ -13,14 +13,17 @@ import { useUserProfile } from "@/lib/useUserProfile";
 export default function Banner() {
   const { user, signOut } = useAuth();
 
-  const userId = (user as { id?: string })?.id;
-  const { profile, loading } = useUserProfile(userId) as {
-    profile: { full_name?: string } | null;
-    loading: boolean;
-  };
+  // Evitamos errores si user es undefined
+  const userId = user?.id || null;
 
+  // Aseguramos que profile siempre sea un objeto o null
+  const { profile = null, loading } = useUserProfile(userId) || {};
+
+  // Obtenemos el nombre de forma segura
   const displayName =
-    profile?.full_name?.split(" ")[0] || "User";
+    (profile && profile.full_name && profile.full_name.split(" ")[0]) ||
+    (user?.user_metadata?.full_name?.split(" ")[0]) ||
+    "User";
 
   return (
     <div className="flex flex-col min-h-screen px-8">
@@ -39,9 +42,7 @@ export default function Banner() {
 
         {user && !loading && (
           <div className="flex items-center gap-4">
-            <p className="text-gray-700 font-medium">
-              Hi, {displayName}
-            </p>
+            <p className="text-gray-700 font-medium">Hi, {displayName}</p>
             <button
               onClick={signOut}
               className="border-2 border-black bg-white text-black rounded-xl px-4 py-2 cursor-pointer hover:bg-black hover:text-white transition"
@@ -54,31 +55,16 @@ export default function Banner() {
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-12 mt-8">
         <div className="flex flex-col gap-6">
-          <Image
-            className="rounded-xl shadow-md"
-            src="/sketch.jpg"
-            width={450}
-            height={450}
-            alt="sketch"
-          />
-          <Image
-            className="rounded-xl shadow-md"
-            src="/example.jpg"
-            width={450}
-            height={300}
-            alt="example"
-          />
+          <Image className="rounded-xl shadow-md" src="/sketch.jpg" width={450} height={450} alt="sketch" />
+          <Image className="rounded-xl shadow-md" src="/example.jpg" width={450} height={300} alt="example" />
         </div>
 
         <div className="max-w-xl text-center md:text-left">
-          <h1 className="text-4xl font-bold leading-tight mb-4">
-            From Sketch to Reality
-          </h1>
+          <h1 className="text-4xl font-bold leading-tight mb-4">From Sketch to Reality</h1>
           <p className="text-gray-700 text-lg">
-            Bring your restaurant vision to life with AI-powered professional renders.
-            Upload your restaurant sketch and watch as our AI transforms it into a
-            professional architectural rendering — perfect for presentations, investor
-            pitches, and design visualization, no 3D modeling skills required.
+            Bring your restaurant vision to life with AI-powered professional renders. Upload your restaurant sketch and
+            watch as our AI transforms it into a professional architectural rendering — perfect for presentations,
+            investor pitches, and design visualization, no 3D modeling skills required.
           </p>
 
           <Link href="/transform">
