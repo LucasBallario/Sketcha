@@ -13,13 +13,10 @@ import { useUserProfile } from "@/lib/useUserProfile";
 export default function Banner() {
   const { user, signOut } = useAuth();
 
-  // Evitamos errores si user es undefined
   const userId = user?.id || null;
 
-  // Aseguramos que profile siempre sea un objeto o null
   const { profile = null, loading } = useUserProfile(userId) || {};
 
-  // Obtenemos el nombre de forma segura
   const displayName =
     (profile && profile.full_name && profile.full_name.split(" ")[0]) ||
     (user?.user_metadata?.full_name?.split(" ")[0]) ||
