@@ -3,19 +3,19 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-interface UseCreditsReturn {
-  credits: number | null;
-  loading: boolean;
-  fetchCredits: () => Promise<void>;
-  decrementCredits: () => Promise<void>;
-}
-
-export function useCredits(userId: string | undefined): UseCreditsReturn {
+export function useCredits(userId?: string | null) {
   const [credits, setCredits] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchCredits = async () => {
-    if (!userId) return;
+    console.log("🧠 useCredits → userId:", userId);
+
+    if (!userId) {
+      setCredits(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
     const { data, error } = await supabase
@@ -24,15 +24,20 @@ export function useCredits(userId: string | undefined): UseCreditsReturn {
       .eq("id", userId)
       .single();
 
-    if (error) console.error("Error fetching credits:", error);
-    setCredits(data?.credits ?? 0);
+    if (error) {
+      console.error("Error fetching credits:", error);
+      setCredits(null);
+    } else {
+      setCredits(data?.credits ?? 0);
+    }
+
     setLoading(false);
   };
 
   const decrementCredits = async () => {
     if (!userId) return;
 
-    const { data, error } = await supabase.rpc("decrement_credits", {
+    const { error } = await supabase.rpc("decrement_credits", {
       user_id: userId,
     });
 
@@ -44,8 +49,6 @@ export function useCredits(userId: string | undefined): UseCreditsReturn {
   };
 
   useEffect(() => {
-    if (!userId) return;
-    console.log("🧩 useCredits → userId recibido:", userId);
     fetchCredits();
   }, [userId]);
 
