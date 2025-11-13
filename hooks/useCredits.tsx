@@ -3,8 +3,15 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-export function useCredits(userId) {
-  const [credits, setCredits] = useState(null);
+interface UseCreditsReturn {
+  credits: number | null;
+  loading: boolean;
+  fetchCredits: () => Promise<void>;
+  decrementCredits: () => Promise<void>;
+}
+
+export function useCredits(userId: string | undefined): UseCreditsReturn {
+  const [credits, setCredits] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchCredits = async () => {
@@ -22,7 +29,6 @@ export function useCredits(userId) {
     setLoading(false);
   };
 
-  // Descontar 1 crédito
   const decrementCredits = async () => {
     if (!userId) return;
 
@@ -33,7 +39,7 @@ export function useCredits(userId) {
     if (error) {
       console.error("Error decrementing credits:", error);
     } else {
-      setCredits((prev) => (prev > 0 ? prev - 1 : 0));
+      setCredits((prev) => (prev && prev > 0 ? prev - 1 : 0));
     }
   };
 
