@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/StyleSelector.jsx", "app/api/generate/route.js", "next.config.js", "app/components/Banner.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/StyleSelector.jsx", "app/api/generate/route.js", "next.config.js", "app/components/Banner.jsx", "hooks/useAuth.js", "hooks/useCredits.js"],
   "exclude": ["node_modules"]
 }
