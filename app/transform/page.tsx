@@ -19,7 +19,7 @@ export default function Page() {
 function TransformPageContent() {
   const router = useRouter()
 
-  const { user } = useAuth() as any
+  const { user } = useAuth() as { user: { id: string } | null }
   const userId = user ? String(user.id) : null
 
   const { credits, loading: creditsLoading, decrementCredits } =
